@@ -9,13 +9,13 @@
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(135deg, #e53935, #43a047);
+  background: linear-gradient(135deg, #e53935, #2e7d32);
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   color: white;
+  overflow: hidden;
 }
 
 .box {
@@ -25,20 +25,12 @@ body {
   width: 90%;
   max-width: 400px;
   text-align: center;
-  animation: aparecer 1s ease;
+  animation: surgir 1s ease;
 }
 
-@keyframes aparecer {
+@keyframes surgir {
   from { opacity: 0; transform: scale(0.8); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-h1 {
-  margin-bottom: 10px;
-}
-
-p {
-  font-size: 1.2em;
+  to { opacity: 1; transform: scale(1); }
 }
 
 input, button {
@@ -52,8 +44,8 @@ input, button {
 
 button {
   background: #ffcc00;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .autor {
@@ -68,13 +60,13 @@ button {
 .snow {
   position: fixed;
   top: -10px;
-  font-size: 20px;
+  font-size: 18px;
   animation: cair linear infinite;
 }
 
 @keyframes cair {
   from { transform: translateY(0); }
-  to   { transform: translateY(100vh); }
+  to { transform: translateY(100vh); }
 }
 </style>
 </head>
@@ -82,9 +74,9 @@ button {
 <body>
 
 <div class="box" id="box">
-  <h1 id="titulo">🎄 Bem-vindo 🎄</h1>
+  <h1 id="titulo">🎄 Feliz Natal 🎄</h1>
   <p id="texto">Qual é o seu nome?</p>
-  <input id="input" placeholder="Digite aqui">
+  <input id="input" placeholder="Digite o seu nome">
   <button onclick="avancar()">Continuar</button>
 </div>
 
@@ -92,44 +84,43 @@ button {
 
 <script>
 let passo = 0;
-let dados = {};
+let nome = "";
 
 const perguntas = [
   "Você gostou de ter conhecido o Aurélio?",
-  "Deseja continuar em contato no próximo ano?",
   "Quer deixar uma mensagem de Natal?"
 ];
 
 function avancar() {
-  const input = document.getElementById("input").value.trim();
-  if (!input) return alert("Preencha o campo 😊");
+  const valor = document.getElementById("input").value.trim();
+  if (!valor) {
+    alert("Por favor, escreva algo 😊");
+    return;
+  }
 
   if (passo === 0) {
-    dados.nome = input;
-    document.getElementById("titulo").innerText = `🎄 Feliz Natal, ${input}! 🎄`;
+    nome = valor;
+    document.getElementById("titulo").innerText = `🎄 Feliz Natal, ${nome}! 🎄`;
     document.getElementById("texto").innerText = perguntas[0];
     document.getElementById("input").value = "";
-    document.getElementById("input").placeholder = "Sua resposta";
+    document.getElementById("input").placeholder = "Digite sua resposta";
     passo++;
-  } else if (passo <= perguntas.length) {
-    dados["resposta" + passo] = input;
-
-    if (passo < perguntas.length) {
-      document.getElementById("texto").innerText = perguntas[passo];
-      document.getElementById("input").value = "";
-      passo++;
-    } else {
-      finalizar();
-    }
+  } 
+  else if (passo === 1) {
+    document.getElementById("texto").innerText = perguntas[1];
+    document.getElementById("input").value = "";
+    passo++;
+  } 
+  else {
+    finalizar();
   }
 }
 
 function finalizar() {
   document.getElementById("box").innerHTML = `
-    <h1>🎄 Feliz Natal, ${dados.nome}! 🎄</h1>
-    <p>Agora só mais um passo 😊</p>
-    <p>Clique no botão abaixo para responder rapidamente</p>
-    <button onclick="irFormulario()">Responder</button>
+    <h1>🎉 Obrigado, ${nome}! 🎉</h1>
+    <p>Para terminar, responda rapidinho no formulário 😊</p>
+    <button onclick="irFormulario()">Responder formulário</button>
   `;
   soltarConfete();
 }
@@ -141,27 +132,17 @@ function irFormulario() {
   );
 }
 
-  document.getElementById("box").innerHTML = `
-    <h1>🎉 Obrigado, ${dados.nome}! 🎉</h1>
-    <p>Tenha um prospero ano novo 🎄✨</p>
-  `;
-
-  soltarConfete();
-}
-  soltarConfete();
-}
-
-// ❄️ Criar neve
+/* ❄️ Neve */
 for (let i = 0; i < 25; i++) {
-  let snow = document.createElement("div");
-  snow.className = "snow";
-  snow.innerText = "❄";
-  snow.style.left = Math.random() * 100 + "vw";
-  snow.style.animationDuration = (Math.random() * 5 + 5) + "s";
-  document.body.appendChild(snow);
+  let s = document.createElement("div");
+  s.className = "snow";
+  s.innerText = "❄";
+  s.style.left = Math.random() * 100 + "vw";
+  s.style.animationDuration = (Math.random() * 5 + 5) + "s";
+  document.body.appendChild(s);
 }
 
-// 🎊 Confete simples
+/* 🎊 Confete */
 function soltarConfete() {
   for (let i = 0; i < 20; i++) {
     let c = document.createElement("div");
@@ -176,21 +157,4 @@ function soltarConfete() {
 </script>
 
 </body>
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "COLE_AQUI",
-  authDomain: "COLE_AQUI",
-  projectId: "COLE_AQUI",
-  storageBucket: "COLE_AQUI",
-  messagingSenderId: "COLE_AQUI",
-  appId: "COLE_AQUI"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-</script>
 </html>
