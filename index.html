@@ -125,19 +125,25 @@ function avancar() {
 }
 
 function finalizar() {
+  document.getElementById("box").innerHTML = `
+    <h1>🎄 Feliz Natal, ${dados.nome}! 🎄</h1>
+    <p>Agora só mais um passo 😊</p>
+    <p>Clique no botão abaixo para responder rapidamente</p>
+    <button onclick="irFormulario()">Responder</button>
+  `;
+  soltarConfete();
+}
 
-  // 🔥 SALVAR NO FIREBASE
-  db.collection("respostas").add({
-    nome: dados.nome,
-    pergunta1: dados.resposta1 || "",
-    pergunta2: dados.resposta2 || "",
-    pergunta3: dados.resposta3 || "",
-    data: new Date()
-  });
+function irFormulario() {
+  window.open(
+    "https://docs.google.com/forms/d/e/1FAIpQLSdK2x-f4o_8Y7nlPi8vQOtIQ2K4MfRjID3VBI7pGnJA6-2wQw/viewform?usp=header",
+    "_blank"
+  );
+}
 
   document.getElementById("box").innerHTML = `
     <h1>🎉 Obrigado, ${dados.nome}! 🎉</h1>
-    <p>Suas respostas foram enviadas com sucesso 🎄✨</p>
+    <p>Tenha um prospero ano novo 🎄✨</p>
   `;
 
   soltarConfete();
