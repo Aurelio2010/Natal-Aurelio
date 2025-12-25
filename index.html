@@ -118,18 +118,20 @@ function avancar() {
 
 function finalizar() {
   document.getElementById("box").innerHTML = `
-    <h1>🎉 Obrigado, ${nome}! 🎉</h1>
-    <p>Para terminar, responda rapidinho no formulário 😊</p>
-    <button onclick="irFormulario()">Responder formulário</button>
+    <h1>🎄 Obrigado, ${nome}! 🎄</h1>
+    <p>Deixe sua resposta final aqui 😊</p>
+
+    <iframe 
+      src="https://docs.google.com/forms/d/e/1FAIpQLSdK2x-f4o_8Y7nlPi8vQOtIQ2K4MfRjID3VBI7pGnJA6-2wQw/viewform?embedded=true"
+      width="100%"
+      height="400"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0">
+      Carregando…
+    </iframe>
   `;
   soltarConfete();
-}
-
-function irFormulario() {
-  window.open(
-    "https://docs.google.com/forms/d/e/1FAIpQLSdK2x-f4o_8Y7nlPi8vQOtIQ2K4MfRjID3VBI7pGnJA6-2wQw/viewform?usp=header",
-    "_blank"
-  );
 }
 
 /* ❄️ Neve */
