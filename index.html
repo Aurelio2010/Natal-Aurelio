@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Feliz Natal 🎄</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #e53935, #43a047);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: white;
+}
+
+.box {
+  background: rgba(255,255,255,0.15);
+  padding: 25px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: aparecer 1s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 1.2em;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+}
+
+button {
+  background: #ffcc00;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.autor {
+  position: fixed;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+/* ❄️ Neve */
+.snow {
+  position: fixed;
+  top: -10px;
+  font-size: 20px;
+  animation: cair linear infinite;
+}
+
+@keyframes cair {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100vh); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="box">
+  <h1 id="titulo">🎄 Bem-vindo 🎄</h1>
+  <p id="texto">Qual é o seu nome?</p>
+  <input id="input" placeholder="Digite aqui">
+  <button onclick="avancar()">Continuar</button>
+</div>
+
+<div class="autor">Criado por <strong>Aurélio</strong></div>
+
+<script>
+let passo = 0;
+let dados = {};
+
+const perguntas = [
+  "Você gostou de ter conhecido o Aurélio?",
+  "Deseja continuar em contato no próximo ano?",
+  "Quer deixar uma mensagem de Natal?"
+];
+
+function avancar() {
+  const input = document.getElementById("input").value.trim();
+  if (!input) return alert("Preencha o campo 😊");
+
+  if (passo === 0) {
+    dados.nome = input;
+    document.getElementById("titulo").innerText = `🎄 Feliz Natal, ${input}! 🎄`;
+    document.getElementById("texto").innerText = perguntas[0];
+    document.getElementById("input").value = "";
+    document.getElementById("input").placeholder = "Sua resposta";
+    passo++;
+  } else if (passo <= perguntas.length) {
+    dados["resposta" + passo] = input;
+
+    if (passo < perguntas.length) {
+      document.getElementById("texto").innerText = perguntas[passo];
+      document.getElementById("input").value = "";
+      passo++;
+    } else {
+      finalizar();
+    }
+  }
+}
+
+function finalizar() {
+
+  // 🔥 SALVAR NO FIREBASE
+  db.collection("respostas").add({
+    nome: dados.nome,
+    pergunta1: dados.resposta1 || "",
+    pergunta2: dados.resposta2 || "",
+    pergunta3: dados.resposta3 || "",
+    data: new Date()
+  });
+
+  document.getElementById("box").innerHTML = `
+    <h1>🎉 Obrigado, ${dados.nome}! 🎉</h1>
+    <p>Suas respostas foram enviadas com sucesso 🎄✨</p>
+  `;
+
+  soltarConfete();
+}
+  soltarConfete();
+}
+
+// ❄️ Criar neve
+for (let i = 0; i < 25; i++) {
+  let snow = document.createElement("div");
+  snow.className = "snow";
+  snow.innerText = "❄";
+  snow.style.left = Math.random() * 100 + "vw";
+  snow.style.animationDuration = (Math.random() * 5 + 5) + "s";
+  document.body.appendChild(snow);
+}
+
+// 🎊 Confete simples
+function soltarConfete() {
+  for (let i = 0; i < 20; i++) {
+    let c = document.createElement("div");
+    c.innerText = "🎊";
+    c.style.position = "fixed";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.top = Math.random() * 100 + "vh";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+</script>
+
+</body>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+</script>
+</html>
