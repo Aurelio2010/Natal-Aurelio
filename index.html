@@ -72,6 +72,17 @@ canvas {
   top: 0;
   left: 0;
 }
+
+/* Nome do autor no canto inferior direito */
+#autor {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  color: gold;
+  font-size: 16px;
+  z-index: 20;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -85,6 +96,8 @@ canvas {
   <input id="resposta" placeholder="Digite aqui">
   <button onclick="proximo()">Continuar</button>
 </div>
+
+<div id="autor">Autor: Aurélio</div>
 
 <!-- EMAILJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
@@ -146,7 +159,7 @@ function proximo() {
   const valor = input.value.trim();
 
   if (!valor) {
-    alert("Este campo é obrigatório 😊");
+    alert("Tenta deixar uma mensagem de Ano novo para o Airelio");
     return;
   }
 
@@ -160,7 +173,7 @@ function proximo() {
   else if (passo === 1) {
     dados.gostou = valor;
     document.getElementById("pergunta").innerText =
-      "Agora deixe uma mensagem de Ano Novo 🎆 (obrigatório)";
+      "Agora deixe uma mensagem de Ano Novo 🎆 para Aurelio";
     input.value = "";
     passo++;
   }
