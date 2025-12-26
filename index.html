@@ -2,159 +2,170 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Feliz Natal 🎄</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feliz Ano Novo 🎆</title>
 
 <style>
-body {
+* {
   margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #e53935, #2e7d32);
+  padding: 0;
+  box-sizing: border-box;
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  overflow: hidden;
 }
 
-.box {
-  background: rgba(255,255,255,0.15);
-  padding: 25px;
-  border-radius: 20px;
+body {
+  background: radial-gradient(circle at bottom, #020024, #000);
+  height: 100vh;
+  overflow: hidden;
+  color: white;
+}
+
+#container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
   width: 90%;
   max-width: 400px;
-  text-align: center;
-  animation: surgir 1s ease;
 }
 
-@keyframes surgir {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
+h1 {
+  font-size: 2.5em;
+  animation: brilho 2s infinite alternate;
 }
 
-input, button {
+@keyframes brilho {
+  from { text-shadow: 0 0 10px gold; }
+  to { text-shadow: 0 0 30px white; }
+}
+
+input {
   width: 100%;
-  padding: 12px;
   margin-top: 12px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  font-size: 1em;
+  font-size: 16px;
+  outline: none;
 }
 
 button {
-  background: #ffcc00;
-  font-weight: bold;
+  margin-top: 15px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: gold;
+  font-size: 16px;
   cursor: pointer;
+  width: 100%;
 }
 
-.autor {
-  position: fixed;
-  bottom: 10px;
-  right: 15px;
-  font-size: 0.9em;
-  opacity: 0.8;
-}
-
-/* ❄️ Neve */
-.snow {
-  position: fixed;
-  top: -10px;
-  font-size: 18px;
-  animation: cair linear infinite;
-}
-
-@keyframes cair {
-  from { transform: translateY(0); }
-  to { transform: translateY(100vh); }
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box" id="box">
-  <h1 id="titulo">🎄 Feliz Natal 🎄</h1>
-  <p id="texto">Qual é o seu nome?</p>
-  <input id="input" placeholder="Digite o seu nome">
-  <button onclick="avancar()">Continuar</button>
+<canvas id="fogos"></canvas>
+
+<div id="container">
+  <h1>🎉 Feliz Ano Novo! 🎉</h1>
+  <p style="margin-top:10px;">Seu nome</p>
+  <input id="nome" placeholder="Digite seu nome">
+
+  <p style="margin-top:10px;">Sua mensagem</p>
+  <input id="mensagem" placeholder="Mensagem de Ano Novo 🎆">
+
+  <button onclick="enviar()">Enviar 🎇</button>
 </div>
 
-<div class="autor">Criado por <strong>Aurélio</strong></div>
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("R5-4FRCx6UA89RPg7");
+</script>
 
 <script>
-let passo = 0;
-let nome = "";
+// 🎆 FOGOS DE ARTIFÍCIO
+const canvas = document.getElementById("fogos");
+const ctx = canvas.getContext("2d");
 
-const perguntas = [
-  "Você gostou de ter conhecido o Aurélio?",
-  "Quer deixar uma mensagem de Natal?"
-];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function avancar() {
-  const valor = document.getElementById("input").value.trim();
-  if (!valor) {
-    alert("Por favor, escreva algo 😊");
+let fogos = [];
+
+function criarFogo() {
+  const x = Math.random() * canvas.width;
+  const y = Math.random() * canvas.height / 2;
+  const cores = ["red", "yellow", "cyan", "lime", "magenta", "orange"];
+
+  for (let i = 0; i < 70; i++) {
+    fogos.push({
+      x,
+      y,
+      r: Math.random() * 3 + 1,
+      dx: (Math.random() - 0.5) * 6,
+      dy: (Math.random() - 0.5) * 6,
+      cor: cores[Math.floor(Math.random() * cores.length)],
+      vida: 100
+    });
+  }
+}
+
+function animar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  fogos.forEach((f, i) => {
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+    ctx.fillStyle = f.cor;
+    ctx.fill();
+
+    f.x += f.dx;
+    f.y += f.dy;
+    f.vida--;
+
+    if (f.vida <= 0) fogos.splice(i, 1);
+  });
+
+  requestAnimationFrame(animar);
+}
+
+setInterval(criarFogo, 700);
+animar();
+
+// 📩 ENVIAR EMAIL
+function enviar() {
+  const nome = document.getElementById("nome").value.trim();
+  const mensagem = document.getElementById("mensagem").value.trim();
+
+  if (!nome || !mensagem) {
+    alert("Preencha todos os campos 😊");
     return;
   }
 
-  if (passo === 0) {
-    nome = valor;
-    document.getElementById("titulo").innerText = `🎄 Feliz Natal, ${nome}! 🎄`;
-    document.getElementById("texto").innerText = perguntas[0];
-    document.getElementById("input").value = "";
-    document.getElementById("input").placeholder = "Digite sua resposta";
-    passo++;
-  } 
-  else if (passo === 1) {
-    document.getElementById("texto").innerText = perguntas[1];
-    document.getElementById("input").value = "";
-    passo++;
-  } 
-  else {
-    finalizar();
-  }
-}
-
-function finalizar() {
-  document.getElementById("box").innerHTML = `
-    <h1>🎄 Obrigado, ${nome}! 🎄</h1>
-    <p>Deixe sua resposta final aqui 😊</p>
-
-    <iframe 
-      src="https://docs.google.com/forms/d/e/1FAIpQLSdK2x-f4o_8Y7nlPi8vQOtIQ2K4MfRjID3VBI7pGnJA6-2wQw/viewform?embedded=true"
-      width="100%"
-      height="400"
-      frameborder="0"
-      marginheight="0"
-      marginwidth="0">
-      Carregando…
-    </iframe>
-  `;
-  soltarConfete();
-}
-
-/* ❄️ Neve */
-for (let i = 0; i < 25; i++) {
-  let s = document.createElement("div");
-  s.className = "snow";
-  s.innerText = "❄";
-  s.style.left = Math.random() * 100 + "vw";
-  s.style.animationDuration = (Math.random() * 5 + 5) + "s";
-  document.body.appendChild(s);
-}
-
-/* 🎊 Confete */
-function soltarConfete() {
-  for (let i = 0; i < 20; i++) {
-    let c = document.createElement("div");
-    c.innerText = "🎊";
-    c.style.position = "fixed";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.top = Math.random() * 100 + "vh";
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 3000);
-  }
+  emailjs.send("service_e259imu", "template_93uj9tm", {
+    name: nome,
+    mensagem: mensagem,
+    email: "anonimo@email.com"
+  })
+  .then(() => {
+    document.getElementById("container").innerHTML = `
+      <h1>🎆 Obrigado, ${nome}! 🎆</h1>
+      <p>Muito obrigado e tenha um propéro Ano Novo 💌</p>
+    `;
+  })
+  .catch((erro) => {
+    alert("Erro ao enviar 😢");
+    console.error(erro);
+  });
 }
 </script>
 
