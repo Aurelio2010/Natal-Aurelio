@@ -28,11 +28,11 @@ body {
   text-align: center;
   z-index: 10;
   width: 90%;
-  max-width: 400px;
+  max-width: 420px;
 }
 
 h1 {
-  font-size: 2.5em;
+  font-size: 2.4em;
   animation: brilho 2s infinite alternate;
 }
 
@@ -41,9 +41,14 @@ h1 {
   to { text-shadow: 0 0 30px white; }
 }
 
+#pergunta {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
 input {
   width: 100%;
-  margin-top: 12px;
+  margin-top: 15px;
   padding: 12px;
   border-radius: 10px;
   border: none;
@@ -53,13 +58,13 @@ input {
 
 button {
   margin-top: 15px;
-  padding: 12px 20px;
+  padding: 12px;
+  width: 100%;
   border-radius: 10px;
   border: none;
   background: gold;
   font-size: 16px;
   cursor: pointer;
-  width: 100%;
 }
 
 canvas {
@@ -76,13 +81,9 @@ canvas {
 
 <div id="container">
   <h1>🎉 Feliz Ano Novo! 🎉</h1>
-  <p style="margin-top:10px;">Seu nome</p>
-  <input id="nome" placeholder="Digite seu nome">
-
-  <p style="margin-top:10px;">Sua mensagem</p>
-  <input id="mensagem" placeholder="Mensagem de Ano Novo 🎆">
-
-  <button onclick="enviar()">Enviar 🎇</button>
+  <div id="pergunta">Qual é o seu nome?</div>
+  <input id="resposta" placeholder="Digite aqui">
+  <button onclick="proximo()">Continuar</button>
 </div>
 
 <!-- EMAILJS -->
@@ -104,67 +105,86 @@ let fogos = [];
 function criarFogo() {
   const x = Math.random() * canvas.width;
   const y = Math.random() * canvas.height / 2;
-  const cores = ["red", "yellow", "cyan", "lime", "magenta", "orange"];
+  const cores = ["red","yellow","cyan","lime","magenta","orange"];
 
   for (let i = 0; i < 70; i++) {
     fogos.push({
-      x,
-      y,
-      r: Math.random() * 3 + 1,
-      dx: (Math.random() - 0.5) * 6,
-      dy: (Math.random() - 0.5) * 6,
-      cor: cores[Math.floor(Math.random() * cores.length)],
-      vida: 100
+      x, y,
+      dx:(Math.random()-0.5)*6,
+      dy:(Math.random()-0.5)*6,
+      r:Math.random()*3+1,
+      cor:cores[Math.floor(Math.random()*cores.length)],
+      vida:100
     });
   }
 }
 
 function animar() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  fogos.forEach((f, i) => {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  fogos.forEach((f,i)=>{
     ctx.beginPath();
-    ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-    ctx.fillStyle = f.cor;
+    ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+    ctx.fillStyle=f.cor;
     ctx.fill();
-
-    f.x += f.dx;
-    f.y += f.dy;
+    f.x+=f.dx;
+    f.y+=f.dy;
     f.vida--;
-
-    if (f.vida <= 0) fogos.splice(i, 1);
+    if(f.vida<=0) fogos.splice(i,1);
   });
-
   requestAnimationFrame(animar);
 }
 
-setInterval(criarFogo, 700);
+setInterval(criarFogo,700);
 animar();
 
-// 📩 ENVIAR EMAIL
-function enviar() {
-  const nome = document.getElementById("nome").value.trim();
-  const mensagem = document.getElementById("mensagem").value.trim();
+// 📋 PERGUNTAS UMA POR UMA
+let passo = 0;
+let dados = {};
 
-  if (!nome || !mensagem) {
-    alert("Preencha todos os campos 😊");
+function proximo() {
+  const input = document.getElementById("resposta");
+  const valor = input.value.trim();
+
+  if (!valor) {
+    alert("Este campo é obrigatório 😊");
     return;
   }
 
+  if (passo === 0) {
+    dados.nome = valor;
+    document.getElementById("pergunta").innerText =
+      "Você gostou de conhecer o Aurélio?";
+    input.value = "";
+    passo++;
+  }
+  else if (passo === 1) {
+    dados.gostou = valor;
+    document.getElementById("pergunta").innerText =
+      "Agora deixe uma mensagem de Ano Novo 🎆 (obrigatório)";
+    input.value = "";
+    passo++;
+  }
+  else {
+    dados.mensagem = valor;
+    enviarEmail();
+  }
+}
+
+function enviarEmail() {
   emailjs.send("service_e259imu", "template_93uj9tm", {
-    name: nome,
-    mensagem: mensagem,
+    name: dados.nome,
+    resposta1: dados.gostou,
+    mensagem: dados.mensagem,
     email: "anonimo@email.com"
   })
   .then(() => {
     document.getElementById("container").innerHTML = `
-      <h1>🎆 Obrigado, ${nome}! 🎆</h1>
-      <p>Muito obrigado e tenha um propéro Ano Novo 💌</p>
+      <h1>🎆 Obrigado, ${dados.nome}! 🎆</h1>
+      <p>Sua mensagem de Ano Novo foi enviada com sucesso 💌</p>
     `;
   })
-  .catch((erro) => {
+  .catch(() => {
     alert("Erro ao enviar 😢");
-    console.error(erro);
   });
 }
 </script>
